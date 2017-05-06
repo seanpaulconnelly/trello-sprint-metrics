@@ -1,4 +1,15 @@
 namespace :sprint do
+  
+  # GET ALL CARDS FOR EACH MEMBER, (INCLUDE NAME, LIST)
+  # LOOP THROUGH EACH CARD IN RESPONSE...
+  #   IF USER.CARD EXISTS WITH MATCHING TRELLO ID
+  #     IF IT IS NOT COMPLETED YET
+  #       UPDATE LIST, ESTIMATE, ADDED_TO_CURRENT_LIST_AT, STARTED_AT, COMPLETED_AT
+  #   ELSE 
+  #     CREATE ONE, SET TRELLO_ID, LIST, ESTIMATE, ADDED_TO_CURRENT_LIST_AT, STARTED_AT, COMPLETED_AT
+  #       IF CARD IS IN COMPLETED LIST AND STARTED_AT IS NULL
+  #           STARTED_AT SHOULD EQL COMPLETED_AT
+  
   task calculate_daily_stats: :environment do
     User.where("trello_id IS NOT NULL").each do |user|
       path = "boards/#{TrelloHelper.trello_board}/members/#{user.trello_id}/cards"
@@ -11,19 +22,6 @@ namespace :sprint do
         puts card["idList"]
       end
     end
-
-    
-    # GET ALL CARDS FOR EACH MEMBER, (INCLUDE NAME, LIST)
-    # LOOP THROUGH EACH CARD IN RESPONSE...
-    #   IF MEMBER.CARD EXISTS WITH MATCHING TRELLO ID
-    #     IF IT IS NOT COMPLETED YET
-    #       UPDATE LIST, ESTIMATE, ADDED_TO_CURRENT_LIST_AT, STARTED_AT, COMPLETED_AT
-    #   ELSE 
-    #     CREATE ONE, SET TRELLO_ID, LIST, ESTIMATE, ADDED_TO_CURRENT_LIST_AT, STARTED_AT, COMPLETED_AT
-    #       IF CARD IS IN COMPLETED LIST AND STARTED_AT IS NULL
-    #           STARTED_AT SHOULD EQL COMPLETED_AT
-    
-
   end
 
   
