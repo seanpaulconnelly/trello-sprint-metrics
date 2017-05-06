@@ -10,10 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170503142959) do
+ActiveRecord::Schema.define(version: 20170506032456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "cards", force: :cascade do |t|
+    t.string "trello_id"
+    t.integer "estimate"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "trello_card_name"
+    t.bigint "list_id"
+    t.index ["list_id"], name: "index_cards_on_list_id"
+  end
+
+  create_table "cards_users", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "card_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["card_id"], name: "index_cards_users_on_card_id"
+    t.index ["user_id"], name: "index_cards_users_on_user_id"
+  end
+
+  create_table "lists", force: :cascade do |t|
+    t.string "trello_id"
+    t.string "trello_list_name"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
@@ -21,7 +50,9 @@ ActiveRecord::Schema.define(version: 20170503142959) do
     t.string "salt"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "trello_id"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "cards", "lists"
 end

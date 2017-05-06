@@ -8,7 +8,7 @@ end
 gem 'dotenv-rails', groups: [:development, :test]
 gem 'rest-client'
 gem 'sorcery'
-gem "haml-rails", "~> 0.9"
+gem 'haml', git: 'https://github.com/haml/haml'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.0'
