@@ -12,7 +12,7 @@ namespace :lists do
     trello_lists.each do |trello_list|
       db_list = List.find_by(trello_id: trello_list["id"])
       if db_list
-        db_list.update(name: trello_list["name"])
+        db_list.update(trello_list_name: trello_list["name"])
       else
         List.create(trello_list_name: trello_list["name"], trello_id: trello_list["id"], status:0)
       end
