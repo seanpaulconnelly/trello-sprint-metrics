@@ -11,6 +11,7 @@ gem 'dotenv-rails', groups: [:development, :test]
 gem 'rest-client'
 gem 'sorcery'
 gem 'haml', git: 'https://github.com/haml/haml'
+gem "paranoia", "~> 2.2"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.0'
