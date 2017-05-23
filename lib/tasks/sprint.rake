@@ -10,6 +10,7 @@ namespace :sprint do
   #     CREATE ONE, SETTING TRELLO_ID, TRELLO_CARD_NAME, LIST, ESTIMATE, STARTED_AT, COMPLETED_AT
   #      AND PUSH IT ONTO THE USERS LIST OF CARDS
 
+  desc "loop through everyone's cards on the board and create/update them"
   task calculate_daily_stats: :environment do
     User.where("trello_id IS NOT NULL").each do |user|
       path = "boards/#{TrelloHelper.trello_board}/members/#{user.trello_id}/cards"
@@ -51,9 +52,26 @@ namespace :sprint do
     end
   end
 
-  
+
+  desc "destroy cards if they're archived"
+  task cleanup: :environment do
+    User.where("trello_id IS NOT NULL").each do |user|
+      path = "boards/#{TrelloHelper.trello_board}/members/#{user.trello_id}/cards"
+      params = "&filter=closed&card_fields=name&fields=name"
+      trello_cards = TrelloHelper.call_trello(path, params)
+      trello_cards.each do |trello_card|
+        db_card = Card.find_by(trello_id: trello_card["id"])
+        if db_card
+          db_card.destroy
+        end
+      end
+    end
+  end
+
+
+  # desc "end sprint and calculate archived metrics"
   # task end: :environment do |task, args|
-  #   DEFAULT TO CURRENT SPRINT UNLESS START_DATE / END_DATE ARE PASSED IN ARGS
+  # #   DEFAULT TO CURRENT SPRINT UNLESS START_DATE / END_DATE ARE PASSED IN ARGS
   # end
 
 end
