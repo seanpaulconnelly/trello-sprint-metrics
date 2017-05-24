@@ -96,7 +96,7 @@ namespace :sprint do
           sprint: sprint,
           user: user,
           points_velocity: user.cards.where("completed_at <= ?", sprint.scheduled_ends_at).sum(:estimate),
-          cards_velocity: user.cards.where("completed_at <= ?", end_date.scheduled_ends_at).count,
+          cards_velocity: user.cards.where("completed_at <= ?", sprint.scheduled_ends_at).count,
           unfinished_points: user.cards.where("completed_at IS NULL").sum(:estimate),
           unfinished_cards: user.cards.where("completed_at IS NULL").count
         )
