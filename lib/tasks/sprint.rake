@@ -95,8 +95,8 @@ namespace :sprint do
         ArchivedMetric.create!(
           sprint: sprint,
           user: user,
-          points_velocity: user.cards.where("completed_at <= ?", sprint.scheduled_ends_at).sum(:estimate),
-          cards_velocity: user.cards.where("completed_at <= ?", sprint.scheduled_ends_at).count,
+          points_velocity: user.cards.where("completed_at <= ?", end_date).sum(:estimate),
+          cards_velocity: user.cards.where("completed_at <= ?", end_date).count,
           unfinished_points: user.cards.where("completed_at IS NULL").sum(:estimate),
           unfinished_cards: user.cards.where("completed_at IS NULL").count
         )
