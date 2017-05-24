@@ -10,6 +10,7 @@ namespace :sprint do
   #     CREATE ONE, SETTING TRELLO_ID, TRELLO_CARD_NAME, LIST, ESTIMATE, STARTED_AT, COMPLETED_AT
   #      AND PUSH IT ONTO THE USERS LIST OF CARDS
 
+  # rake sprint:calculate_daily_stats
   desc "loop through everyone's cards on the board and create/update them"
   task calculate_daily_stats: :environment do
     User.where("trello_id IS NOT NULL").each do |user|
@@ -53,6 +54,7 @@ namespace :sprint do
   end
 
 
+  # rake sprint:cleanup
   desc "destroy cards if they're archived"
   task cleanup: :environment do
     User.where("trello_id IS NOT NULL").each do |user|
