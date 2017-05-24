@@ -23,12 +23,12 @@ namespace :sprint do
             user.cards << db_card
           end
           if !db_card.completed_at?
-            db_card.update(
+            db_card.update!(
               trello_card_name: trello_card["name"],
               list: List.find_by(trello_id: trello_card["idList"]),
               estimate: trello_card["name"].scan((/\(.*?\)/)).first.to_s.delete('()').to_i,
-              started_at: Time.now ? db_card.started_today? || db_card.started_and_completed_in_same_day? : nil,
-              completed_at: Time.now ? db_card.completed_today? : nil
+              started_at: db_card.started_today? ? Time.now : nil,
+              completed_at: db_card.completed_today? ? Time.now : nil
               )
           end
         else
@@ -40,8 +40,8 @@ namespace :sprint do
             )
           if db_card.save
             db_card.update(
-              started_at: Time.now ? db_card.in_working_list? || db_card.in_completed_list? : nil,
-              completed_at: Time.now ? db_card.in_completed_list?: nil
+              started_at: db_card.started_today? ? Time.now : nil,
+              completed_at: db_card.completed_today? ? Time.now : nil
               )
           else
             Rails.logger.error "!!!!!!!! ERROR SAVING DB_CARD: #{db_card}"
@@ -69,9 +69,45 @@ namespace :sprint do
   end
 
 
-  # desc "end sprint and calculate archived metrics"
-  # task end: :environment do |task, args|
-  # #   DEFAULT TO CURRENT SPRINT UNLESS START_DATE / END_DATE ARE PASSED IN ARGS
-  # end
+  # rake sprint:start_for_date start_date='2017-05-08'
+  desc "check for a sprint scheduled on a date (or today if you don't pass one) and start it"
+  task start_for_date: :environment do
+    start_date = ENV['start_date'] || Time.now
+    sprint = Sprint.where(scheduled_starts_at: start_date).first
+    if sprint
+      sprint.update!(actual_started_at: Time.now)
+    else
+      Rails.logger.error "!!!!!!!! NO SPRINT STARTING ON #{start_date}"
+    end
+  end
+
+
+  # rake sprint:end_for_date end_date='2017-05-22'
+  desc "check for a sprint ending on a date (or today if you don't pass one), end it, calculate archived metrics, and remove completed user cards"
+  task end_for_date: :environment do
+    end_date = ENV['end_date'] || Time.now
+    sprint = Sprint.where(scheduled_ends_at: end_date).where("actual_ended_at IS NULL").first
+    if sprint
+      # loop through user and create an archived metric for the sprint
+      User.where("trello_id IS NOT NULL").each do |user|
+        ArchivedMetric.create!(
+          sprint: sprint,
+          user: user,
+          points_velocity: user.cards.where("completed_at <= ?", sprint.scheduled_ends_at).sum(:estimate),
+          cards_velocity: user.cards.where("completed_at <= ?", end_date.scheduled_ends_at).count,
+          unfinished_points: user.cards.where("completed_at IS NULL").sum(:estimate),
+          unfinished_cards: user.cards.where("completed_at IS NULL").count
+        )
+      end
+
+      # soft delete completed cards
+      Card.all.where("completed_at IS NOT NULL").destroy_all
+
+      # end the sprint
+      sprint.update(actual_ended_at: Time.now)
+    else
+      Rails.logger.error "!!!!!!!! NO SPRINT ENDING ON #{end_date}"
+    end
+  end
 
 end

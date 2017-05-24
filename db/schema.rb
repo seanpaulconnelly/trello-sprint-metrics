@@ -10,10 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170523132958) do
+ActiveRecord::Schema.define(version: 20170524155455) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "archived_metrics", force: :cascade do |t|
+    t.bigint "sprint_id"
+    t.bigint "user_id"
+    t.integer "points_velocity"
+    t.integer "cards_velocity"
+    t.integer "unfinished_points"
+    t.integer "unfinished_cards"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_archived_metrics_on_deleted_at"
+    t.index ["sprint_id"], name: "index_archived_metrics_on_sprint_id"
+    t.index ["user_id"], name: "index_archived_metrics_on_user_id"
+  end
 
   create_table "cards", force: :cascade do |t|
     t.string "trello_id"
@@ -46,6 +61,17 @@ ActiveRecord::Schema.define(version: 20170523132958) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sprints", force: :cascade do |t|
+    t.datetime "scheduled_starts_at"
+    t.datetime "scheduled_ends_at"
+    t.datetime "actual_started_at"
+    t.datetime "actual_ended_at"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_sprints_on_deleted_at"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
     t.string "crypted_password"
@@ -56,5 +82,7 @@ ActiveRecord::Schema.define(version: 20170523132958) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "archived_metrics", "sprints"
+  add_foreign_key "archived_metrics", "users"
   add_foreign_key "cards", "lists"
 end
