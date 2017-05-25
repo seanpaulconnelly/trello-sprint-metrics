@@ -103,7 +103,7 @@ namespace :sprint do
       end
 
       # soft delete completed cards
-      Card.all.where("completed_at IS NOT NULL").destroy_all
+      Card.all.where("completed_at <= ?", end_date).destroy_all
 
       # end the sprint
       sprint.update(actual_ended_at: Time.now)
