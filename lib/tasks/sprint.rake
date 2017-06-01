@@ -10,11 +10,11 @@ namespace :sprint do
   #     CREATE ONE, SETTING TRELLO_ID, TRELLO_CARD_NAME, LIST, ESTIMATE, STARTED_AT, COMPLETED_AT
   #      AND PUSH IT ONTO THE USERS LIST OF CARDS
 
-  # rake sprint:calculate_daily_stats
+  # rake sprint:sync_cards
   desc "loop through everyone's cards on the sprint board and create/update them"
-  task calculate_daily_stats: :environment do
+  task sync_cards: :environment do
     User.where("trello_id IS NOT NULL").each do |user|
-      path = "boards/#{TrelloHelper.trello_board}/members/#{user.trello_id}/cards"
+      path = "boards/#{TrelloHelper.in_progress_board}/members/#{user.trello_id}/cards"
       params = "&cards=open&card_fields=name&fields=name,idList"
       trello_cards = TrelloHelper.call_trello(path, params)
       trello_cards.each do |trello_card|
@@ -56,10 +56,10 @@ namespace :sprint do
 
 
   # rake sprint:cleanup
-  desc "destroy our instance of sprint board cards if they become archived"
+  desc "destroy our instance of sprint board cards if they become archived on Trello"
   task cleanup: :environment do
     User.where("trello_id IS NOT NULL").each do |user|
-      path = "boards/#{TrelloHelper.trello_board}/members/#{user.trello_id}/cards"
+      path = "boards/#{TrelloHelper.in_progress_board}/members/#{user.trello_id}/cards"
       params = "&filter=closed&card_fields=name&fields=name"
       trello_cards = TrelloHelper.call_trello(path, params)
       trello_cards.each do |trello_card|
