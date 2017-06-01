@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170524155455) do
+ActiveRecord::Schema.define(version: 20170601133033) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 20170524155455) do
     t.string "trello_card_name"
     t.bigint "list_id"
     t.datetime "deleted_at"
+    t.integer "metric_type"
     t.index ["deleted_at"], name: "index_cards_on_deleted_at"
     t.index ["list_id"], name: "index_cards_on_list_id"
   end
@@ -51,6 +52,17 @@ ActiveRecord::Schema.define(version: 20170524155455) do
     t.datetime "updated_at", null: false
     t.index ["card_id"], name: "index_cards_users_on_card_id"
     t.index ["user_id"], name: "index_cards_users_on_user_id"
+  end
+
+  create_table "daily_kanban_metrics", force: :cascade do |t|
+    t.bigint "user_id"
+    t.integer "cards_in_progress"
+    t.integer "cards_completed"
+    t.integer "points_in_progress"
+    t.integer "points_completed"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_daily_kanban_metrics_on_user_id"
   end
 
   create_table "lists", force: :cascade do |t|
@@ -85,4 +97,5 @@ ActiveRecord::Schema.define(version: 20170524155455) do
   add_foreign_key "archived_metrics", "sprints"
   add_foreign_key "archived_metrics", "users"
   add_foreign_key "cards", "lists"
+  add_foreign_key "daily_kanban_metrics", "users"
 end
