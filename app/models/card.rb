@@ -3,7 +3,7 @@ class Card < ApplicationRecord
   has_and_belongs_to_many :users
   belongs_to :list
   before_destroy { users.clear }
-  enum metric_type: [ :sprint, :kanban ]
+  enum metric_type: [ :sprint, :client_kanban, :bug_kanban ]
 
   def completed_today?
     !self.completed_at? && self.in_completed_list?

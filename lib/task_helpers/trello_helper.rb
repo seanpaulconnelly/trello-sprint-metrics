@@ -18,8 +18,4 @@ module TrelloHelper
   def self.in_progress_board
     ENV['TRELLO_IN_PROGRESS_BOARD_ID']
   end
-
-  def self.kanban_board
-    ENV['TRELLO_INTEGRATIONS_KANBAN_ID']
-  end
 end
