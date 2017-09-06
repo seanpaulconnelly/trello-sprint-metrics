@@ -1,10 +1,69 @@
 %h1= @user.email
 
-%h4 Last two weeks client work
-= @last_two_weeks_client_work.inspect
+%hr
+- if @recent_days_client_work.present?
+  %h3 Last two weeks client work
+  %table
+    %thead
+      %tr
+        %th Day
+        %th Cards In Progress
+        %th Cards Completed
+        %th Points In Progress
+        %th Points Completed
+    %tbody
+      - @recent_days_client_work.each do |day|
+        %tr
+          %td= day.created_at.to_date
+          %td= day.cards_in_progress
+          %td= day.cards_completed
+          %td= day.points_in_progress
+          %td= day.points_completed
+- else
+  %em No recent client work data
 
-%h4 Last two weeks bug fixes
-= @last_two_weeks_bug_fixes.inspect
+%hr
 
-%h4 Last two sprints velocity
-= @last_two_sprints_velocity.inspect
+- if @recent_days_bug_fixes.present?
+  %h3 Last two weeks bug fixes
+  %table
+    %thead
+      %tr
+        %th Day
+        %th Cards In Progress
+        %th Cards Completed
+        %th Points In Progress
+        %th Points Completed
+    %tbody
+      - @recent_days_bug_fixes.each do |day|
+        %tr
+          %td= day.created_at.to_date
+          %td= day.cards_in_progress
+          %td= day.cards_completed
+          %td= day.points_in_progress
+          %td= day.points_completed
+- else
+  %em No recent bug fix data
+
+%hr
+
+- if @recent_sprints_velocity.present?
+  %h3 Last two sprints velocity
+  %table
+    %thead
+      %tr
+        %th Sprint Ending
+        %th Points Velocity
+        %th Unfinished Points
+        %th Cards Velocity
+        %th Unfinished Cards
+    %tbody
+      - @recent_sprints_velocity.each do |archived_metric|
+        %tr
+          %td= archived_metric.sprint.scheduled_starts_at.to_date
+          %td= archived_metric.points_velocity
+          %td= archived_metric.unfinished_points
+          %td= archived_metric.cards_velocity
+          %td= archived_metric.unfinished_cards
+- else
+  %em No recent sprint data

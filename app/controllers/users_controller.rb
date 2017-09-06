@@ -2,9 +2,9 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update]
 
   def show
-    @last_two_weeks_client_work = DailyKanbanMetric.where(user: @user, metric_type: 1).last(14)
-    @last_two_weeks_bug_fixes = DailyKanbanMetric.where(user: @user, metric_type: 2).last(14)
-    @last_two_sprints_velocity = ArchivedMetric.where(user: @user).last(2)
+    @recent_days_client_work = DailyKanbanMetric.where(user: @user, metric_type: 1).last(14)
+    @recent_days_bug_fixes = DailyKanbanMetric.where(user: @user, metric_type: 2).last(14)
+    @recent_sprints_velocity = ArchivedMetric.includes(:sprint).where(user: @user).last(2)
   end
 
   def edit
