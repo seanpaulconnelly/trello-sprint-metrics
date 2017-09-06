@@ -1,53 +1,8 @@
 %h1= @user.email
 
 %hr
-- if @recent_days_client_work.present?
-  %h3 Last two weeks client work
-  %table
-    %thead
-      %tr
-        %th Day
-        %th Cards In Progress
-        %th Cards Completed
-        %th Points In Progress
-        %th Points Completed
-    %tbody
-      - @recent_days_client_work.each do |day|
-        %tr
-          %td= day.created_at.to_date
-          %td= day.cards_in_progress
-          %td= day.cards_completed
-          %td= day.points_in_progress
-          %td= day.points_completed
-- else
-  %em No recent client work data
 
-%hr
-
-- if @recent_days_bug_fixes.present?
-  %h3 Last two weeks bug fixes
-  %table
-    %thead
-      %tr
-        %th Day
-        %th Cards In Progress
-        %th Cards Completed
-        %th Points In Progress
-        %th Points Completed
-    %tbody
-      - @recent_days_bug_fixes.each do |day|
-        %tr
-          %td= day.created_at.to_date
-          %td= day.cards_in_progress
-          %td= day.cards_completed
-          %td= day.points_in_progress
-          %td= day.points_completed
-- else
-  %em No recent bug fix data
-
-%hr
-
-- if @recent_sprints_velocity.present?
+- if @recent_sprints_velocity.sum { |d| d.cards_velocity + d.unfinished_cards } > 0
   %h3 Last two sprints velocity
   %table
     %thead
@@ -66,4 +21,56 @@
           %td= archived_metric.cards_velocity
           %td= archived_metric.unfinished_cards
 - else
-  %em No recent sprint data
+  %em 
+    = @user.email
+    has no in progress or completed data for recent sprints
+
+%hr
+
+- if @recent_days_client_work.sum { |d| d.cards_completed + d.cards_in_progress } > 0
+  %h3 Last two weeks client work
+  %table
+    %thead
+      %tr
+        %th Day
+        %th Cards In Progress
+        %th Cards Completed
+        %th Points In Progress
+        %th Points Completed
+    %tbody
+      - @recent_days_client_work.each do |day|
+        %tr
+          %td= day.created_at.to_date
+          %td= day.cards_in_progress
+          %td= day.cards_completed
+          %td= day.points_in_progress
+          %td= day.points_completed
+- else
+  %em 
+    = @user.email
+    has no in progress or completed data for recent client work
+
+%hr
+
+- if @recent_days_bug_fixes.sum { |d| d.cards_completed + d.cards_in_progress } > 0
+  %h3 Last two weeks bug fixes
+  %table
+    %thead
+      %tr
+        %th Day
+        %th Cards In Progress
+        %th Cards Completed
+        %th Points In Progress
+        %th Points Completed
+    %tbody
+      - @recent_days_bug_fixes.each do |day|
+        %tr
+          %td= day.created_at.to_date
+          %td= day.cards_in_progress
+          %td= day.cards_completed
+          %td= day.points_in_progress
+          %td= day.points_completed
+- else
+  %em 
+    = @user.email
+    has no in progress or completed data for recent bug fixes
