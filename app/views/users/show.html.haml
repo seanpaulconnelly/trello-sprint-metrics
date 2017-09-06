@@ -1,13 +1,10 @@
-%p#notice= notice
-%p
-  %strong Email:
-  = @user.email
-%p
-  %strong Crypted password:
-  = @user.crypted_password
-%p
-  %strong Salt:
-  = @user.salt
-= link_to 'Edit', edit_user_path(@user)
-|
-= link_to 'Back', users_path
+%h1= @user.email
+
+%h4 Last two weeks client work
+= @last_two_weeks_client_work.inspect
+
+%h4 Last two weeks bug fixes
+= @last_two_weeks_bug_fixes.inspect
+
+%h4 Last two sprints velocity
+= @last_two_sprints_velocity.inspect

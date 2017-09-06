@@ -8,8 +8,8 @@
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
   %body
   #nav
-    = link_to "Dashboard", root_path
     - if current_user
+      = link_to "Dashboard", root_path
       = link_to "Edit Profile", edit_user_path(current_user.id)
       = link_to "Logout", :logout, method: :post
 
