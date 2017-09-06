@@ -88,7 +88,7 @@ namespace :sprint do
   # rake sprint:end_for_date end_date='2017-05-22'
   desc "check for a sprint ending on a date (or today if you don't pass one), end it, calculate archived metrics, and remove completed user sprint cards"
   task end_for_date: :environment do
-    end_date = ENV['end_date'] || Time.now
+    end_date = ENV['end_date'] || Time.now.beginning_of_day
     sprint = Sprint.where(scheduled_ends_at: end_date).where("actual_ended_at IS NULL").first
     if sprint
       # loop through user and create an archived metric for the sprint
